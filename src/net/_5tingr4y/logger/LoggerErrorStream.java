@@ -13,7 +13,8 @@ final class LoggerErrorStream extends ByteArrayOutputStream {
 		str = "";
 		for (int i = 0; i < strs.length; ++i) {
 			if (strs[i].matches(".*\\r?\\n$")) {
-				new SysErrMessage(strs[i].replaceFirst("\\r?\\n$", ""));
+//				new SysErrMessage(strs[i].replaceFirst("\\r?\\n$", ""));
+				Logger.log(Logger.SYSERR, strs[i].replaceFirst("\\r?\\n$", ""));
 			} else {
 				str += strs[i];
 			}

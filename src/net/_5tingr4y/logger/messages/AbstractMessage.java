@@ -1,4 +1,4 @@
-package net._5tingr4y.logger;
+package net._5tingr4y.logger.messages;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -6,13 +6,11 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net._5tingr4y.logger.Logger;
+
 public abstract class AbstractMessage {
 	
-	protected static int MAX_TAG_LENGTH = 6;
-	
-	public final String sender;
 	public final String levelTag;
-	public final String message;
 	/**
 	 * <li>%l: levelTag
 	 * <li>%e: spaces to align after the level tag
@@ -23,25 +21,16 @@ public abstract class AbstractMessage {
 	
 	public final boolean isError;
 	
-	public AbstractMessage(String sender_, String levelTag_, String message_, String pattern_, boolean isError_) {
-		sender = sender_;
+	public AbstractMessage(String levelTag_, String pattern_, boolean isError_) {
 		levelTag = levelTag_;
-		message = message_;
 		pattern = pattern_;
 		isError = isError_;
-		Logger.log(this);
 	}
 	
-	public final AbstractMessage send() {
-		Logger.log(this);
-		return this;
-	}
-	
-	@Override
-	public final String toString() {
+	public final String formatMessage(String sender, String message) {
 		String ret = pattern.
 				replace("%l", levelTag).
-				replace("%e", fill(levelTag, MAX_TAG_LENGTH)).
+				replace("%e", fill(levelTag, Logger.getMaxTagLength())).
 				replace("%s", sender).
 				replace("%m", message);
 		Pattern pattern = Pattern.compile("%d\\{.*\\}");
@@ -60,13 +49,21 @@ public abstract class AbstractMessage {
 		return ret;
 	}
 	
+	public final static String formatThrowable(Throwable e) {
+		StringBuilder result = new StringBuilder(String.valueOf(e.getMessage()));
+		for (StackTraceElement s : e.getStackTrace())
+			result.append(System.getProperty("line.separator")
+					+ fill("", 16 + Logger.getMaxTagLength()) + "at " + s);
+		return result.toString();
+	}
+	
 	protected static String fill(String str, int length) {
 		if (str.length() < length) {
-			StringBuilder sB = new StringBuilder();
-			while (sB.length() < length - str.length()) {
-				sB.append(" ");
+			StringBuilder sb = new StringBuilder();
+			while (sb.length() < length - str.length()) {
+				sb.append(" ");
 			}
-			return sB.toString();
+			return sb.toString();
 		}
 		return "";
 	}

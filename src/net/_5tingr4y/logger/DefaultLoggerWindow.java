@@ -38,7 +38,7 @@ public class DefaultLoggerWindow extends JFrame implements LoggerWindow {
 		setTitle(title);
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent ev) {
-				new DebugMessage(this, "LoggerWindow closed");
+				Logger.log(this, Logger.DEBUG, "LoggerWindow closed");
 				ev.getWindow().dispose();
 			}
 		});
@@ -64,7 +64,7 @@ public class DefaultLoggerWindow extends JFrame implements LoggerWindow {
 		exitButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new DebugMessage(this, "Attemting to close application");
+				Logger.log(this, Logger.DEBUG, "Attemting to close application");
 				if (exitCmd != null)
 					exitCmd.run();
 			}

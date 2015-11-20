@@ -1,14 +1,7 @@
 package net._5tingr4y.test.logger;
 
-import net._5tingr4y.logger.DebugMessage;
 import net._5tingr4y.logger.DefaultLoggerWindow;
-import net._5tingr4y.logger.ErrorMessage;
-import net._5tingr4y.logger.ExceptionMessage;
-import net._5tingr4y.logger.InfoMessage;
 import net._5tingr4y.logger.Logger;
-import net._5tingr4y.logger.SysErrMessage;
-import net._5tingr4y.logger.SysOutMessage;
-import net._5tingr4y.logger.WarningMessage;
 
 public class LoggerTest1 {
 	
@@ -22,13 +15,13 @@ public class LoggerTest1 {
 		Logger.setLoggerWindow(new DefaultLoggerWindow("Logger: Test"));
 		Logger.setLogFile("testLog.log");
 		Logger.startLogging();
-		new DebugMessage(this, "test debug");
+		Logger.log(this, Logger.DEBUG, "test debug");
 		Thread.sleep(WAITTIME);
-		new InfoMessage(this, "test information");
+		Logger.log(this, Logger.INFO, "test information");
 		Thread.sleep(WAITTIME);
-		new WarningMessage(this, "test warning");
+		Logger.log(this, Logger.WARN, "test warning");
 		Thread.sleep(WAITTIME);
-		new ErrorMessage(this, "test error");
+		Logger.log(this, Logger.ERROR, "test error");
 		Thread.sleep(WAITTIME);
 		System.out.println("test sysout 1");
 		Thread.sleep(WAITTIME);
@@ -41,9 +34,9 @@ public class LoggerTest1 {
 		Thread.sleep(WAITTIME);
 		System.err.println("test syserr 2");
 		Thread.sleep(WAITTIME);
-		new SysOutMessage("test sysout 3");
+		Logger.log(Logger.SYSOUT, "test sysout 3");
 		Thread.sleep(WAITTIME);
-		new SysErrMessage("test syserr 3");
+		Logger.log(Logger.SYSERR, "test syserr 3");
 		Thread.sleep(WAITTIME);
 		Logger.catchSysOut(true);
 		Logger.catchSysErr(true);
@@ -53,15 +46,15 @@ public class LoggerTest1 {
 		System.err.println("test syserr 4");
 		Thread.sleep(WAITTIME);
 		Logger.startLogging();
-		Logger.mute(DebugMessage.class);
-		new DebugMessage(this, "test mute 1");
+		Logger.mute(Logger.DEBUG);
+		Logger.log(this, Logger.DEBUG, "test mute 1");
 		Thread.sleep(WAITTIME);
-		new InfoMessage(this, "test mute 2");
+		Logger.log(this, Logger.INFO, "test mute 2");
 		Thread.sleep(WAITTIME);
 		try {
 			throw new Exception("test exception");
 		} catch (Exception e) {
-			new ExceptionMessage(e);
+			Logger.log(e);
 		}
 		String test = null;
 		Thread.sleep(WAITTIME);
