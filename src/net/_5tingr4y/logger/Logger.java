@@ -11,16 +11,6 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.HashSet;
 import java.util.Hashtable;
 
-import net._5tingr4y.logger.messages.AbstractMessage;
-import net._5tingr4y.logger.messages.DebugMessage;
-import net._5tingr4y.logger.messages.ErrorMessage;
-import net._5tingr4y.logger.messages.ExceptionMessage;
-import net._5tingr4y.logger.messages.InfoMessage;
-import net._5tingr4y.logger.messages.SysErrMessage;
-import net._5tingr4y.logger.messages.SysOutMessage;
-import net._5tingr4y.logger.messages.UncaughtExceptionMessage;
-import net._5tingr4y.logger.messages.WarningMessage;
-
 public class Logger {
 	
 	public static final String SYSOUT = "sysout";
@@ -31,6 +21,9 @@ public class Logger {
 	public static final String ERROR = "error";
 	public static final String EXCEPT = "except";
 	public static final String UNCEXC = "uncexc";
+	
+	public static final String PATTERN_LOGGER = "[%d{HH:mm:ss} %l]%e %s: %m";
+	public static final String PATTERN_SYSTEM = "[%d{HH:mm:ss} %l]%e %m";
 	
 	
 	private static final Logger instance = new Logger();
@@ -50,27 +43,23 @@ public class Logger {
 	
 	private LoggerWindow window = null;
 	
-//	private HashSet<Class<? extends AbstractMessage>> mutedTypes = new HashSet<>();
-	
-//	private Hashtable<Class<? extends AbstractMessage>, Color> messageColors; //TODO
-	
 	private HashSet<String> mutedTypes = new HashSet<>();
 	
 	private Hashtable<String, Color> messageColors = new Hashtable<>();
 	
-	private Hashtable<String, AbstractMessage> messages = new Hashtable<>();
+	private Hashtable<String, Message> messages = new Hashtable<>();
 	
 	static {
 		//messages
-		instance.messages.put(SYSOUT, new SysOutMessage());
-		instance.messages.put(SYSERR, new SysErrMessage());
+		instance.messages.put(SYSOUT, new Message("SYSOUT", PATTERN_SYSTEM, false));
+		instance.messages.put(SYSERR, new Message("SYSERR", PATTERN_SYSTEM, false));
 		
-		instance.messages.put(DEBUG, new DebugMessage());
-		instance.messages.put(INFO, new InfoMessage());
-		instance.messages.put(WARN, new WarningMessage());
-		instance.messages.put(ERROR, new ErrorMessage());
-		instance.messages.put(EXCEPT, new ExceptionMessage());
-		instance.messages.put(UNCEXC, new UncaughtExceptionMessage());
+		instance.messages.put(DEBUG, new Message("DEBUG", PATTERN_LOGGER, false));
+		instance.messages.put(INFO, new Message("INFO", PATTERN_LOGGER, false));
+		instance.messages.put(WARN, new Message("WARN", PATTERN_LOGGER, false));
+		instance.messages.put(ERROR, new Message("ERROR", PATTERN_LOGGER, true));
+		instance.messages.put(EXCEPT, new Message("EXCEPT", PATTERN_LOGGER, true));
+		instance.messages.put(UNCEXC, new Message("UNCEXC", PATTERN_LOGGER, true));
 		
 		
 		//message colors
@@ -87,8 +76,8 @@ public class Logger {
 	
 	private Logger() {
 		logger_unc = Thread.getDefaultUncaughtExceptionHandler();
-		logger_out = System.out;// new PrintStream(new FileOutputStream(FileDescriptor.out));
-		logger_err = System.err; //new PrintStream(new FileOutputStream(FileDescriptor.err));
+		logger_out = System.out;
+		logger_err = System.err;
 	}
 	
 	//getters
@@ -105,7 +94,7 @@ public class Logger {
 	}
 	
 	public static Color getColor(String level) {
-		AbstractMessage message = instance.messages.get(level);
+		Message message = instance.messages.get(level);
 		return instance.messageColors.getOrDefault(level, message == null ? Color.DARK_GRAY : message.isError ? Color.RED : Color.BLACK);
 	}
 	
@@ -114,7 +103,7 @@ public class Logger {
 		if (b) {
 			if (Thread.getDefaultUncaughtExceptionHandler() != instance.logger_unc) return;
 //			instance.logger_unc = (Thread t, Throwable e) -> new UncaughtExceptionMessage(t, e);
-			instance.logger_unc = (Thread t, Throwable e) -> log("<Thread: " + t.getName() + "> - " + e.getClass().getName(), UNCEXC, AbstractMessage.formatThrowable(e));
+			instance.logger_unc = (Thread t, Throwable e) -> log("<Thread: " + t.getName() + "> - " + e.getClass().getName(), UNCEXC, Message.formatThrowable(e));
 			if (instance.running) Thread.setDefaultUncaughtExceptionHandler(instance.logger_unc);
 		} else {
 			Thread.setDefaultUncaughtExceptionHandler(instance.logger_unc);
@@ -219,7 +208,7 @@ public class Logger {
 	
 	//msg management	
 	public static void log(Throwable e) {
-		log(e.getClass().getName(), EXCEPT, AbstractMessage.formatThrowable(e));
+		log(e.getClass().getName(), EXCEPT, Message.formatThrowable(e));
 	}
 	
 	public static void log(String level, String message) {
@@ -238,7 +227,7 @@ public class Logger {
 		}
 		
 		if(!instance.running || instance.mutedTypes.contains(level)) return;
-		AbstractMessage msg = instance.messages.get(level);
+		Message msg = instance.messages.get(level);
 		
 		if(msg == null) {
 			//TODO: add LoggerMessage and use that here (to also log the message)

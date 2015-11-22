@@ -1,4 +1,4 @@
-package net._5tingr4y.logger.messages;
+package net._5tingr4y.logger;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -6,9 +6,7 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net._5tingr4y.logger.Logger;
-
-public abstract class AbstractMessage {
+public class Message {
 	
 	public final String levelTag;
 	/**
@@ -21,7 +19,7 @@ public abstract class AbstractMessage {
 	
 	public final boolean isError;
 	
-	public AbstractMessage(String levelTag_, String pattern_, boolean isError_) {
+	public Message(String levelTag_, String pattern_, boolean isError_) {
 		levelTag = levelTag_;
 		pattern = pattern_;
 		isError = isError_;
