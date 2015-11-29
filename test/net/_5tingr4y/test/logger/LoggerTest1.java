@@ -13,8 +13,9 @@ public class LoggerTest1 {
 		Logger.catchSysOut(true);
 		Logger.catchSysErr(true);
 		Logger.setLoggerWindow(new DefaultLoggerWindow("Logger: Test"));
-		Logger.setLogFile("testLog.log");
+		Logger.setLogFile("test/testLog1.log");
 		Logger.startLogging();
+		
 		Logger.log(this, Logger.DEBUG, "test debug");
 		Thread.sleep(WAITTIME);
 		Logger.log(this, Logger.INFO, "test information");
@@ -65,7 +66,6 @@ public class LoggerTest1 {
 		try {
 			new LoggerTest1();
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
