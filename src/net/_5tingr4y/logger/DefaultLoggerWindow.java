@@ -88,7 +88,7 @@ public class DefaultLoggerWindow extends JFrame implements LoggerWindow {
 		}
 	}
 
-	void setExitCommand(Runnable cmd) {
+	public void setExitCommand(Runnable cmd) {
 		exitCmd = cmd;
 		exitButton.setEnabled(cmd != null);
 	}

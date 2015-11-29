@@ -3,9 +3,7 @@ package net._5tingr4y.logger;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.HashSet;
@@ -213,7 +211,6 @@ public class Logger {
 	//starting/stopping
 	public static void startLogging() {
 		if(instance.running) return;
-		//TODO: incatcher
 		if(instance.sys_out != null) System.setOut(new PrintStream(instance.sys_out));
 		if(instance.sys_err != null) System.setErr(new PrintStream(instance.sys_err));
 		if(instance.logger_unc != null) Thread.setDefaultUncaughtExceptionHandler(instance.logger_unc);
@@ -228,7 +225,7 @@ public class Logger {
 		Thread.setDefaultUncaughtExceptionHandler(instance.logger_unc);
 	}
 	
-	//logging	
+	//logging
 	public static void log(Throwable e) {
 		log(e.getClass().getName(), EXCEPT, Message.formatThrowable(e));
 	}
