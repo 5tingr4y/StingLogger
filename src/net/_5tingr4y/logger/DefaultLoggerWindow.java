@@ -59,7 +59,7 @@ public class DefaultLoggerWindow extends JFrame implements LoggerWindow {
 		scrollPane.setViewportView(textPane);
 		textPane.setEditable(false);
 
-		exitButton = new JButton("Exit Game");
+		exitButton = new JButton("Close");
 		exitButton.setEnabled(false);
 		exitButton.addActionListener(new ActionListener() {
 			@Override
