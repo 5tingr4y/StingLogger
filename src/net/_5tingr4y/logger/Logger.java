@@ -149,7 +149,6 @@ public class Logger {
 			if (folder != null) folder.mkdirs();
 			instance.logger_file = new PrintStream(file);
 		} catch (FileNotFoundException e) {
-//			new ExceptionMessage(e);
 			if(instance.running)
 				log(e);
 			else
@@ -170,14 +169,37 @@ public class Logger {
 		instance.mutedTypes.remove(level);
 	}
 	
-//	public static void setTagMaxLength(int length) {
-//		MAX_TAG_LENGTH = Math.max(1, length);
-//	}
-	
 	public static LoggerWindow setLoggerWindow(LoggerWindow window_) {
 		LoggerWindow buf = instance.window;
 		instance.window = window_;
 		return buf;
+	}
+	
+	public static Message addLevel(String level, Message message) {
+		if(level == null) return null;
+		Message previous = instance.messages.get(level);
+		if(message != null) {
+			instance.messages.put(level, message);
+			calculateNewMaxTagLength();
+		}
+		return previous;
+	}
+	
+	public static Message removeLevel(String level) {
+		if(level != null && instance.messages.size() > 1) {
+			Message previous = instance.messages.remove(level);
+			calculateNewMaxTagLength();
+			return previous;
+		}
+		return null;
+	}
+	
+	private static void calculateNewMaxTagLength() {
+		int newMaxTagLength = 1;
+		for(String level: instance.messages.keySet()) {
+			newMaxTagLength = Math.max(newMaxTagLength, instance.messages.get(level).levelTag.length());
+		}
+		maxTagLength = newMaxTagLength;
 	}
 	
 	public static Color setColor(String level, Color color) {
@@ -206,7 +228,7 @@ public class Logger {
 		Thread.setDefaultUncaughtExceptionHandler(instance.logger_unc);
 	}
 	
-	//msg management	
+	//logging	
 	public static void log(Throwable e) {
 		log(e.getClass().getName(), EXCEPT, Message.formatThrowable(e));
 	}
@@ -232,6 +254,7 @@ public class Logger {
 		if(msg == null) {
 			//TODO: add LoggerMessage and use that here (to also log the message)
 			log("Logger", WARN, "Level \"" + level + "\" does not exist; unable to log message");
+			return;
 		}
 		
 		String text = msg.formatMessage(sender, message);
