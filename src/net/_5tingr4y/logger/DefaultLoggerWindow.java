@@ -40,7 +40,6 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
-import net._5tingray.stingUtils.math.algebra.linear.Vector2f;
 import net.miginfocom.swing.MigLayout;
 
 public class DefaultLoggerWindow extends JFrame implements LoggerWindow {
@@ -53,10 +52,10 @@ public class DefaultLoggerWindow extends JFrame implements LoggerWindow {
 	private Runnable exitCmd;
 	
 	public DefaultLoggerWindow(String title) {
-		this(title, new Vector2f(100, 100), new Vector2f(800, 600));
+		this(title, 100, 100, 800, 600);
 	}
 	
-	public DefaultLoggerWindow(String title, Vector2f pos, Vector2f size) {
+	public DefaultLoggerWindow(String title, int posX, int posY, int width, int height) {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setTitle(title);
 		addWindowListener(new WindowAdapter() {
@@ -66,7 +65,7 @@ public class DefaultLoggerWindow extends JFrame implements LoggerWindow {
 			}
 		});
 		
-		setBounds((int) pos.getX(), (int) pos.getY(), (int) size.getX(), (int) size.getY());
+		setBounds(posX, posY, width, height);
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
