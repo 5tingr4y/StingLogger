@@ -197,17 +197,21 @@ public class Logger {
 	}
 	
 	public static Message addLevel(String level, Message message) {
-		if(level == null) return null;
+		if(level == null || message == null)
+			throw new IllegalArgumentException("Level and message must not be null");
+		
 		Message previous = instance.messages.get(level);
-		if(message != null) {
-			instance.messages.put(level, message);
-			calculateNewMaxTagLength();
-		}
+		instance.messages.put(level, message);
+		calculateNewMaxTagLength();
 		return previous;
 	}
 	
 	public static Message removeLevel(String level) {
 		if(level != null && instance.messages.size() > 1) {
+			if(level.equals(DEBUG) || level.equals(ERROR) || level.equals(EXCEPT) || level.equals(INFO)
+					|| level.equals(SYSERR) || level.equals(SYSOUT) || level.equals(UNCEXC) || level.equals(WARN))
+				throw new IllegalArgumentException("Level to remove must not be any of the default levels.");
+			
 			Message previous = instance.messages.remove(level);
 			calculateNewMaxTagLength();
 			return previous;
